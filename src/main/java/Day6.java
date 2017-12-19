@@ -50,6 +50,8 @@ public class Day6 {
         return rounds;
     }
 
+
+    // could redistribute in o(n) instead of o(nk), but meh i'm lazy
     private static void redistribute(int[] array, int index) {
         int number = array[index];
         array[index] = 0;
