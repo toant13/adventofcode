@@ -56,6 +56,7 @@ public class Main {
             }
             int index = getUniqueIndex(list);
             if (index == -1) {
+                System.out.println(list);
                 System.out.println("final answer: " + rootNode.getWeight());
                 rootNode = null;
             } else {
@@ -68,11 +69,12 @@ public class Main {
     }
 
     private static int getUniqueIndex(List<Integer> list) {
-        for (int i = 0; i < list.size() - 1; i++) {
+        for (int i = 0; i < list.size(); i++) {
             int diffCount = 0;
-            for (int j = i + 1; j < list.size(); j++) {
-                System.out.println("i:" + list.get(i));
-                System.out.println("j:" + list.get(j));
+            for (int j = 0; j < list.size(); j++) {
+                if(i == j){
+                    continue;
+                }
                 if (!list.get(i).equals(list.get(j))) {
                     diffCount++;
                 }
