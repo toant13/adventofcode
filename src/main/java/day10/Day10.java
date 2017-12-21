@@ -1,18 +1,77 @@
 package day10;
 
+import java.util.Arrays;
 import java.util.stream.IntStream;
 
 public class Day10 {
 
     private static int[] INPUT = {147, 37, 249, 1, 31, 2, 226, 0, 161, 71, 254, 243, 183, 255, 30, 70};
     private static int[] TEST = {3, 4, 1, 5};
+    private static int[] SUFFIX = {17, 31, 73, 47, 23};
     private static String INPUT_STRING = "147,37,249,1,31,2,226,0,161,71,254,243,183,255,30,70";
 
 
     public static void main(String[] args) {
         System.out.println("PART1 answer for TEST: " + getSum(TEST, 5));
         System.out.println("PART1 answer for INPUT: " + getSum(INPUT, 256));
+
+        System.out.println("PART2 answer for INPUT: " + getKnotHash(INPUT_STRING, 256));
     }
+
+
+    public static String getKnotHash(String input, int length) {
+        int[] lengths = transformInput(input);
+        int[] list = getList(length);
+        getSparseHash(lengths, list);
+
+        int[] denseHash = getDenseHash(list);
+        StringBuilder knotHash = new StringBuilder();
+        for (int hash : denseHash) {
+            String hex = Integer.toHexString(hash);
+            knotHash.append(hex.length() == 1 ? "0" + hex : hex);
+        }
+
+        return knotHash.toString();
+    }
+
+    private static int[] getDenseHash(int[] list) {
+        int[] result = new int[16];
+        int current = 0;
+        int index = 0;
+        while (current < list.length) {
+            int block = 0;
+            for (int i = current; i < current + 16; i++) {
+                block ^= list[i];
+            }
+            result[index++] = block;
+            current = 16 * index;
+        }
+
+        return result;
+    }
+
+    private static void getSparseHash(int[] lengths, int[] list) {
+        int skipSize = 0;
+        int current = 0;
+        for (int i = 0; i < 64; i++) {
+            for (int lengthValue : lengths) {
+                reverseLengthWindow(list, current, lengthValue);
+                current = (current + skipSize + lengthValue) % list.length;
+                skipSize++;
+            }
+        }
+    }
+
+
+    private static int[] transformInput(String s) {
+        int[] array = new int[s.length()];
+        for (int i = 0; i < s.length(); i++) {
+            int num = s.charAt(i);
+            array[i] = num;
+        }
+        return IntStream.concat(Arrays.stream(array), Arrays.stream(SUFFIX)).toArray();
+    }
+
 
     private static int getSum(int[] input, int length) {
         int[] list = getList(length);
@@ -44,7 +103,6 @@ public class Day10 {
         input[a] = input[b];
         input[b] = temp;
     }
-
 
     private static int[] getList(int length) {
         return IntStream.range(0, length).toArray();
