@@ -20,17 +20,14 @@ public class Day10 {
 
 
     public static String getKnotHash(String input, int length) {
-        int[] lengths = transformInput(input);
-        int[] list = getList(length);
-        getSparseHash(lengths, list);
+        int[] sparseHash = getSparseHash(input, length);
+        int[] denseHash = getDenseHash(sparseHash);
 
-        int[] denseHash = getDenseHash(list);
         StringBuilder knotHash = new StringBuilder();
         for (int hash : denseHash) {
             String hex = Integer.toHexString(hash);
             knotHash.append(hex.length() == 1 ? "0" + hex : hex);
         }
-
         return knotHash.toString();
     }
 
@@ -50,16 +47,21 @@ public class Day10 {
         return result;
     }
 
-    private static void getSparseHash(int[] lengths, int[] list) {
+    private static int[] getSparseHash(String input, int length) {
+        int[] lengths = transformInput(input);
+        int[] sparseHash = getList(length);
+
         int skipSize = 0;
         int current = 0;
         for (int i = 0; i < 64; i++) {
             for (int lengthValue : lengths) {
-                reverseLengthWindow(list, current, lengthValue);
-                current = (current + skipSize + lengthValue) % list.length;
+                reverseLengthWindow(sparseHash, current, lengthValue);
+                current = (current + skipSize + lengthValue) % sparseHash.length;
                 skipSize++;
             }
         }
+
+        return sparseHash;
     }
 
 
