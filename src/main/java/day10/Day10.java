@@ -49,21 +49,29 @@ public class Day10 {
 
     private static int[] getSparseHash(String input, int length) {
         int[] lengths = transformInput(input);
-        int[] sparseHash = getList(length);
+        int[] sparseHash = tieKnot(lengths, length, 64);
+        return sparseHash;
+    }
 
+    private static int getSum(int[] lengths, int length) {
+        int[] list = tieKnot(lengths, length, 1);
+        return list[0] * list[1];
+    }
+
+    private static int[] tieKnot(int[] lengths, int length, int times) {
+        int[] list = getList(length);
         int skipSize = 0;
         int current = 0;
-        for (int i = 0; i < 64; i++) {
+        for (int i = 0; i < times; i++) {
             for (int lengthValue : lengths) {
-                reverseLengthWindow(sparseHash, current, lengthValue);
-                current = (current + skipSize + lengthValue) % sparseHash.length;
+                reverseLengthWindow(list, current, lengthValue);
+                current = (current + skipSize + lengthValue) % list.length;
                 skipSize++;
             }
         }
 
-        return sparseHash;
+        return list;
     }
-
 
     private static int[] transformInput(String s) {
         int[] array = new int[s.length()];
@@ -72,20 +80,6 @@ public class Day10 {
             array[i] = num;
         }
         return IntStream.concat(Arrays.stream(array), Arrays.stream(SUFFIX)).toArray();
-    }
-
-
-    private static int getSum(int[] input, int length) {
-        int[] list = getList(length);
-        int skipSize = 0;
-        int current = 0;
-
-        for (int i : input) {
-            reverseLengthWindow(list, current, i);
-            current = (current + skipSize + i) % list.length;
-            skipSize++;
-        }
-        return list[0] * list[1];
     }
 
     private static void reverseLengthWindow(int[] input, int current, int length) {
