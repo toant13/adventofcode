@@ -1,3 +1,5 @@
+package day4;
+
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -23,7 +25,7 @@ public class Day4 {
         int total = 0;
 
 
-        Path path = Paths.get(Day4.class.getClassLoader().getResource("Day4").toURI());
+        Path path = Paths.get(Day4.class.getClassLoader().getResource("Day4Input").toURI());
         Stream<String> lines = Files.lines(path);
 
         String[] arr = lines.toArray(String[]::new);
@@ -45,7 +47,7 @@ public class Day4 {
         int total = 0;
 
 
-        Path path = Paths.get(Day4.class.getClassLoader().getResource("Day4").toURI());
+        Path path = Paths.get(Day4.class.getClassLoader().getResource("Day4Input").toURI());
         Stream<String> lines = Files.lines(path);
 
         String[] arr = lines.toArray(String[]::new);

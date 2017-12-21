@@ -1,4 +1,4 @@
-import Day7.GraphBuilder;
+package day8;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -46,17 +46,13 @@ public class Day8 {
     public static int part1(String fileName) throws IOException, URISyntaxException {
         Map<String, Integer> register = new HashMap<>();
 
-
-        Path path = Paths.get(GraphBuilder.class.getClassLoader().getResource(fileName).toURI());
+        Path path = Paths.get(Day8.class.getClassLoader().getResource(fileName).toURI());
         Stream<String> lines = Files.lines(path);
 
         lines.forEach(s -> {
             String[] instructionArray = s.split(SPACE_DELIMITER);
 
-            if (!register.containsKey(instructionArray[REGISTER_INDEX])) {
-                register.put(instructionArray[REGISTER_INDEX], 0);
-            }
-
+            register.putIfAbsent(instructionArray[REGISTER_INDEX], 0);
             if (evaluateExpress(register, instructionArray[EXPRESSION_KEY_INDEX], instructionArray[EXPRESSION_INDEX], Integer.parseInt(instructionArray[EXPRESSION_COMPARISON_INDEX]))) {
                 updateRegister(register, instructionArray[REGISTER_INDEX], instructionArray[REGISTER_ACTION_INDEX], Integer.parseInt(instructionArray[REGISTER_ACTION_VALUE_INDEX]));
             }
@@ -75,7 +71,7 @@ public class Day8 {
             int result = current + actionValue;
             highestValue = Integer.max(result, highestValue);
             register.put(registerName, result);
-        } else {
+        } else { //SUBTRACT
             int current = register.get(registerName);
             int result = current - actionValue;
             highestValue = Integer.max(result, highestValue);
@@ -84,9 +80,7 @@ public class Day8 {
     }
 
     private static boolean evaluateExpress(Map<String, Integer> register, String expressionKey, String expression, int comparisonValue) {
-        if (!register.containsKey(expressionKey)) {
-            register.put(expressionKey, 0);
-        }
+        register.putIfAbsent(expressionKey, 0);
 
         int expressionKeyValue = register.get(expressionKey);
         boolean result = false;
