@@ -1,9 +1,12 @@
 package day10;
 
+import java.util.stream.IntStream;
+
 public class Day10 {
 
     private static int[] INPUT = {147, 37, 249, 1, 31, 2, 226, 0, 161, 71, 254, 243, 183, 255, 30, 70};
     private static int[] TEST = {3, 4, 1, 5};
+    private static String INPUT_STRING = "147,37,249,1,31,2,226,0,161,71,254,243,183,255,30,70";
 
 
     public static void main(String[] args) {
@@ -44,10 +47,6 @@ public class Day10 {
 
 
     private static int[] getList(int length) {
-        int[] list = new int[length];
-        for (int i = 0; i < list.length; i++) {
-            list[i] = i;
-        }
-        return list;
+        return IntStream.range(0, length).toArray();
     }
 }
