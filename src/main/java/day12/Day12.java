@@ -38,16 +38,12 @@ public class Day12 {
 
         List<Integer>[] adjList = buildAdjacencyList(list);
         int count = 0;
-        int visitedNumber = 0;
         boolean[] visited = new boolean[adjList.length];
         for (int i = 0; i < adjList.length; i++) {
-            int current = visitedNumber;
-            int newVisited = countVisited(visited, adjList, i, 0) + current;
-
-            if(newVisited > current){
+            int visitedCount = countVisited(visited, adjList, i, 0);
+            if(visitedCount > 0){
                 count++;
             }
-            visitedNumber = newVisited;
         }
 
         return count;
