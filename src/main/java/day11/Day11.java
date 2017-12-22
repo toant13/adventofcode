@@ -38,6 +38,23 @@ public class Day11 {
         System.out.println("PART2 answer for INPUT: " + getMaxDistance(INPUT));
     }
 
+    // part 1
+    public static int getSteps(String fileName) throws URISyntaxException, IOException {
+        Path path = Paths.get(Day11.class.getClassLoader().getResource(fileName).toURI());
+        Stream<String> lines = Files.lines(path);
+        List<String> list = lines.collect(Collectors.toList());
+
+        int totalSteps = 0;
+        for (String s : list) {
+            String[] steps = s.split(COMMA_DELIMITER);
+            Coordinate finalCoordinate = moveSteps(steps);
+
+            totalSteps += getDistanceToStartingPoint(finalCoordinate);
+        }
+
+        return totalSteps;
+    }
+
     // part 2
     public static int getMaxDistance(String fileName) throws URISyntaxException, IOException {
         Path path = Paths.get(Day11.class.getClassLoader().getResource(fileName).toURI());
@@ -63,26 +80,6 @@ public class Day11 {
         }
 
         return maxDistance;
-    }
-
-
-
-
-    // part 1
-    public static int getSteps(String fileName) throws URISyntaxException, IOException {
-        Path path = Paths.get(Day11.class.getClassLoader().getResource(fileName).toURI());
-        Stream<String> lines = Files.lines(path);
-        List<String> list = lines.collect(Collectors.toList());
-
-        int totalSteps = 0;
-        for (String s : list) {
-            String[] steps = s.split(COMMA_DELIMITER);
-            Coordinate finalCoordinate = moveSteps(steps);
-
-            totalSteps += getDistanceToStartingPoint(finalCoordinate);
-        }
-
-        return totalSteps;
     }
 
     private static int getDistanceToStartingPoint(Coordinate coordinate) {
