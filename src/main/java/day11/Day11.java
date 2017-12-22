@@ -35,39 +35,68 @@ public class Day11 {
         System.out.println("PART1 answer for INPUT: " + getSteps(INPUT));
         System.out.println("PART1 answer for TEST: " + getSteps(TEST));
 
-
-
+        System.out.println("PART2 answer for INPUT: " + getMaxDistance(INPUT));
     }
 
+    // part 2
+    public static int getMaxDistance(String fileName) throws URISyntaxException, IOException {
+        Path path = Paths.get(Day11.class.getClassLoader().getResource(fileName).toURI());
+        Stream<String> lines = Files.lines(path);
+        List<String> list = lines.collect(Collectors.toList());
+
+        int maxSteps = 0;
+        for (String s : list) {
+            String[] steps = s.split(COMMA_DELIMITER);
+            maxSteps = getMaxOFMoveSteps(steps);
+        }
+
+        return maxSteps;
+    }
+
+    private static int getMaxOFMoveSteps(String[] steps){
+        Coordinate currentCoordinate = new Coordinate();
+        int maxDistance = Integer.MIN_VALUE;
+        for (String step : steps) {
+            currentCoordinate = actionMap.get(step).apply(currentCoordinate);
+            int currentDistance = getDistanceToStartingPoint(currentCoordinate);
+            maxDistance = Integer.max(currentDistance, maxDistance);
+        }
+
+        return maxDistance;
+    }
+
+
+
+
+    // part 1
     public static int getSteps(String fileName) throws URISyntaxException, IOException {
         Path path = Paths.get(Day11.class.getClassLoader().getResource(fileName).toURI());
         Stream<String> lines = Files.lines(path);
         List<String> list = lines.collect(Collectors.toList());
 
         int totalSteps = 0;
-
         for (String s : list) {
             String[] steps = s.split(COMMA_DELIMITER);
             Coordinate finalCoordinate = moveSteps(steps);
 
-            totalSteps += getShortestRoute(finalCoordinate);
+            totalSteps += getDistanceToStartingPoint(finalCoordinate);
         }
 
         return totalSteps;
     }
 
-    private static int getShortestRoute(Coordinate coordinate) {
+    private static int getDistanceToStartingPoint(Coordinate coordinate) {
         int steps = 0;
         Coordinate current = new Coordinate(coordinate.x, coordinate.y);
         while (!(current.x == 0 || current.y == 0)) {
             if (current.x < 0 && current.y > 0) { //nw
-                current = new Coordinate(current.x + 1, current.y);
+                current = actionMap.get("se").apply(current);
             } else if (current.x > 0 && current.y > 0) { //ne
-                current = new Coordinate(current.x - 1, current.y - 1);
+                current = actionMap.get("sw").apply(current);
             } else if (current.x > 0 && current.y < 0) { //se
-                current = new Coordinate(current.x - 1, current.y);
+                current = actionMap.get("nw").apply(current);
             } else { //sw
-                current = new Coordinate(current.x + 1, current.y + 1);
+                current = actionMap.get("ne").apply(current);
             }
             steps++;
         }
@@ -83,4 +112,5 @@ public class Day11 {
 
         return finalCoordinate;
     }
+
 }
