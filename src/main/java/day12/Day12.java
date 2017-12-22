@@ -26,7 +26,48 @@ public class Day12 {
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + findProgramId0Group(TEST));
         System.out.println("PART1 answer for INPUT: " + findProgramId0Group(INPUT));
+
+        System.out.println("PART2 answer for TEST: " + findNumberOfGroups(TEST));
+        System.out.println("PART2 answer for INPUT: " + findNumberOfGroups(INPUT));
     }
+
+    public static int findNumberOfGroups(String fileName) throws URISyntaxException, IOException {
+        Path path = Paths.get(Day12.class.getClassLoader().getResource(fileName).toURI());
+        Stream<String> lines = Files.lines(path);
+        List<String> list = lines.collect(Collectors.toList());
+
+        List<Integer>[] adjList = buildAdjacencyList(list);
+        int count = 0;
+        int visitedNumber = 0;
+        boolean[] visited = new boolean[adjList.length];
+        for (int i = 0; i < adjList.length; i++) {
+            int current = visitedNumber;
+            int newVisited = countVisited(visited, adjList, i, 0) + current;
+
+            if(newVisited > current){
+                count++;
+            }
+            visitedNumber = newVisited;
+        }
+
+        return count;
+    }
+
+    public static int countVisited(boolean[] visited, List<Integer>[] adjList, int current, int count){
+        if(visited[current]){
+            return 0;
+        }
+
+        visited[current] = true;
+        List<Integer> maps = adjList[current];
+        count++;
+        for (Integer key : maps) {
+            count += countVisited(visited, adjList, key, 0);
+        }
+
+        return count;
+    }
+
 
 
     public static int findProgramId0Group(String fileName) throws URISyntaxException, IOException {
@@ -46,15 +87,14 @@ public class Day12 {
         return count;
     }
 
+
     private static boolean pathToZero(boolean[] visited, List<Integer>[] adjList, int current) {
         if (visited[current]) {
             return false;
         }
-
         if (current == 0) {
             return true;
         }
-
         visited[current] = true;
         List<Integer> maps = adjList[current];
         for (Integer key : maps) {
@@ -62,7 +102,6 @@ public class Day12 {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -76,7 +115,6 @@ public class Day12 {
             List<Integer> valuesArray = Arrays.stream(valuesString).map(Integer::parseInt).collect(Collectors.toList());
             adjList[key] = valuesArray;
         }
-
         return adjList;
     }
 }
