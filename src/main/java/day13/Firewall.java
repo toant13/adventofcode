@@ -1,8 +1,7 @@
 package day13;
 
-import java.util.Arrays;
 
-public class Firewall {
+public class    Firewall {
     Layer[] firewall;
     int rider;
 
@@ -45,10 +44,10 @@ public class Firewall {
         return firewall.length;
     }
 
-    public Firewall clone(){
+    public Firewall clone() {
         Layer[] newFirewall = new Layer[firewall.length];
         for (int i = 0; i < firewall.length; i++) {
-            if(firewall[i] != null){
+            if (firewall[i] != null) {
                 newFirewall[i] = firewall[i].clone();
             }
         }

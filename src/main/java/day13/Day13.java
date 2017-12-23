@@ -22,7 +22,9 @@ public class Day13 {
         System.out.println("PART1 answer for INPUT: " + getSeverity(INPUT));
 
         System.out.println("PART2 answer for TEST: " + findSmallestDelay(TEST));
-        System.out.println("PART2 answer for INPUT: " + findSmallestDelay(INPUT));
+
+        long start = System.currentTimeMillis();
+        System.out.println("PART2 answer for INPUT: " + findSmallestDelay(INPUT) + " total time to process: [" + (System.currentTimeMillis() - start) + "ms]");
     }
 
 
