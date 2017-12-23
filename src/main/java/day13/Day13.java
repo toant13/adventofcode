@@ -20,20 +20,52 @@ public class Day13 {
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + getSeverity(TEST));
         System.out.println("PART1 answer for INPUT: " + getSeverity(INPUT));
+
+        System.out.println("PART2 answer for TEST: " + findSmallestDelay(TEST));
+        System.out.println("PART2 answer for INPUT: " + findSmallestDelay(INPUT));
+    }
+
+
+    public static int findSmallestDelay(String fileName) throws IOException, URISyntaxException {
+        int delay = -1;
+        boolean caught = false;
+
+        Firewall currentFirewall = buildFirewall(fileName);
+        while (!caught) {
+            Firewall newFirewall = currentFirewall.clone();
+            caught = wasCaught(newFirewall);
+            delay++;
+            currentFirewall.moveScanner();
+        }
+
+        return delay;
+    }
+
+    public static boolean wasCaught(Firewall firewall) {
+        int numberOfLayers = firewall.getNumberLayers();
+
+        while (firewall.rider < numberOfLayers - 1) {
+            firewall.moveRider();
+            if (firewall.isRiderCaught()) {
+                return false;
+            }
+            firewall.moveScanner();
+        }
+        return true;
     }
 
 
     public static int getSeverity(String fileName) throws IOException, URISyntaxException {
         int totalSeverity = 0;
         Firewall firewall = buildFirewall(fileName);
-
         int numberOfLayers = firewall.getNumberLayers();
-        while (firewall.rider < numberOfLayers -1) {
-            firewall.moveScanner();
+
+        while (firewall.rider < numberOfLayers - 1) {
             firewall.moveRider();
-            if(firewall.isRiderCaught()){
+            if (firewall.isRiderCaught()) {
                 totalSeverity += firewall.getCurrentSeverity();
             }
+            firewall.moveScanner();
         }
 
         return totalSeverity;
@@ -44,6 +76,10 @@ public class Day13 {
         Stream<String> lines = Files.lines(path);
         List<String> list = lines.collect(Collectors.toList());
 
+        return buildFirewallFromList(list);
+    }
+
+    private static Firewall buildFirewallFromList(List<String> list) {
         String firewallSizeString = list.get(list.size() - 1).replaceAll(" ", "").split(":")[DEPTH_INDEX];
         int firewallSize = Integer.parseInt(firewallSizeString) + 1;
         Firewall firewall = new Firewall(firewallSize);

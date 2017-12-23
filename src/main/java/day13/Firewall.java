@@ -1,11 +1,18 @@
 package day13;
 
+import java.util.Arrays;
+
 public class Firewall {
     Layer[] firewall;
     int rider;
 
     public Firewall(int size) {
         this.firewall = new Layer[size];
+        this.rider = -1;
+    }
+
+    private Firewall(Layer[] firewall) {
+        this.firewall = firewall;
         this.rider = -1;
     }
 
@@ -36,5 +43,16 @@ public class Firewall {
 
     public int getNumberLayers() {
         return firewall.length;
+    }
+
+    public Firewall clone(){
+        Layer[] newFirewall = new Layer[firewall.length];
+        for (int i = 0; i < firewall.length; i++) {
+            if(firewall[i] != null){
+                newFirewall[i] = firewall[i].clone();
+            }
+        }
+
+        return new Firewall(newFirewall);
     }
 }
