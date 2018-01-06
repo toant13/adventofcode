@@ -14,6 +14,37 @@ public class Day14 {
         System.out.println("PART1 answer for TEST: " + findOpenSquares(TEST));
         System.out.println("PART1 answer for INPUT: " + findOpenSquares(INPUT));
 
+        System.out.println("PART2 answer for TEST: " + findNumberOfRegions(TEST));
+        System.out.println("PART2 answer for INPUT: " + findNumberOfRegions(INPUT));
+    }
+
+    public static int findNumberOfRegions(String input) {
+        String[] array = getKnotHashArray(input);
+        boolean[][] visited = new boolean[array.length][array[0].length()];
+        int regionCount = 0;
+
+        for (int y = 0; y < array.length; y++) {
+            for (int x = 0; x < array[0].length(); x++) {
+                if (visited[y][x] == false && array[y].charAt(x) == '1') {
+                    markVisited(array, visited, x, y);
+                    regionCount++;
+                }
+            }
+        }
+
+        return regionCount;
+    }
+
+    private static void markVisited(String[] array, boolean[][] visited, int currentX, int currentY) {
+        if (currentX < 0 || currentX >= array[0].length() || currentY < 0 || currentY >= array.length || visited[currentY][currentX] || array[currentY].charAt(currentX) == '0') {
+            return;
+        }
+
+        visited[currentY][currentX] = true;
+        markVisited(array, visited, currentX, currentY - 1); //up
+        markVisited(array, visited, currentX + 1, currentY); //right
+        markVisited(array, visited, currentX, currentY + 1); //down
+        markVisited(array, visited, currentX - 1, currentY); //left
     }
 
 
