@@ -5,8 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
@@ -16,6 +15,7 @@ public class Day16 {
     private static final String TEST = "Day16Part1Test";
 
     private static String PROGRAM = "abcdefghijklmnop";
+    private static final int DANCE_ITERATIONS = 1000000000;
 
     private static final BiFunction<String, String, String> SPIN = (move, program) -> {
         String xString = move.substring(1);
@@ -65,8 +65,34 @@ public class Day16 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + getProgramAfterDance(TEST, "abcde"));
-        System.out.println("PART1 answer for INPUT: " + getProgramAfterDance(INPUT, PROGRAM));
+        System.out.println("PART1 answer for INPUT: [before: " + PROGRAM + "] [after: " + getProgramAfterDance(INPUT, PROGRAM) + "]");
 
+        System.out.println("PART2 answer for INPUT: " + getProgramAfterDancePart2(INPUT, PROGRAM));
+    }
+
+    public static String getProgramAfterDancePart2(String input, String program) throws IOException, URISyntaxException {
+        String[] array = getDanceFromInput(input);
+
+        Set<String> comboSet = new LinkedHashSet<>();
+        String newProgram = program;
+        for (int i = 0; i < DANCE_ITERATIONS; i++) {
+            for (String danceMove : array) {
+                char move = danceMove.charAt(0);
+                newProgram = functionMap.get(move).apply(danceMove, newProgram);
+            }
+
+            if (comboSet.contains(newProgram)) {
+                break;
+            } else {
+                comboSet.add(newProgram);
+            }
+        }
+
+        String[] combinationArray = new String[comboSet.size()];
+        comboSet.toArray(combinationArray);
+        int newProgramIndex = DANCE_ITERATIONS % comboSet.size();
+
+        return combinationArray[newProgramIndex - 1];
     }
 
 
@@ -78,6 +104,7 @@ public class Day16 {
             char move = danceMove.charAt(0);
             newProgram = functionMap.get(move).apply(danceMove, newProgram);
         }
+
         return newProgram;
     }
 
