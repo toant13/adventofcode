@@ -10,7 +10,9 @@ public class Day17 {
 
     public static void main(String[] args) {
         System.out.println("PART1 answer for TEST: " + getSpinLockValue(TEST));
-        System.out.println("PART2 answer for INPUT: " + getSpinLockValue(INPUT));
+        System.out.println("PART1 answer for INPUT: " + getSpinLockValue(INPUT));
+
+        System.out.println("PART2 answer for INPUT: " + getSpinLockValueZero(INPUT));
     }
 
 
@@ -25,6 +27,22 @@ public class Day17 {
             list.add(currentPosition + 1, currentValue++);
         }
 
-        return list.get(currentPosition+ 2);
+        return list.get(currentPosition + 2);
+    }
+
+    public static int getSpinLockValueZero(int input) {
+        int currentValue = 1;
+        int currentPosition = 0;
+        int size = 1;
+        int result = currentValue;
+        while (currentValue <= 50000000) {
+            currentPosition = (input + currentPosition + 1) % size++;
+            if (currentPosition + 1 == 1) {
+                result = currentValue;
+            }
+            currentValue++;
+        }
+
+        return result;
     }
 }
