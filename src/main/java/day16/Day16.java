@@ -64,8 +64,8 @@ public class Day16 {
 
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("PART1 answer for TEST: " + getProgramAfterDance(TEST, "abcde",1));
-        System.out.println("PART1 answer for INPUT: [before: " + PROGRAM + "] [after: " + getProgramAfterDance(INPUT, PROGRAM,1) + "]");
+        System.out.println("PART1 answer for TEST: " + getProgramAfterDance(TEST, "abcde", 1));
+        System.out.println("PART1 answer for INPUT: [before: " + PROGRAM + "] [after: " + getProgramAfterDance(INPUT, PROGRAM, 1) + "]");
 
         System.out.println("PART2 answer for INPUT: " + getProgramAfterDance(INPUT, PROGRAM, DANCE_ITERATIONS));
     }
@@ -74,6 +74,7 @@ public class Day16 {
         String[] array = getDanceFromInput(input);
 
         Set<String> comboSet = new LinkedHashSet<>();
+        comboSet.add(program);
         String newProgram = program;
         for (int i = 0; i < iterations; i++) {
             for (String danceMove : array) {
@@ -92,7 +93,7 @@ public class Day16 {
         comboSet.toArray(combinationArray);
         int newProgramIndex = iterations % comboSet.size();
 
-        return combinationArray[newProgramIndex == 0 ? 0 : newProgramIndex - 1];
+        return combinationArray[newProgramIndex];
     }
 
     private static String[] getDanceFromInput(String fileName) throws IOException, URISyntaxException {
