@@ -64,18 +64,18 @@ public class Day16 {
 
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("PART1 answer for TEST: " + getProgramAfterDance(TEST, "abcde"));
-        System.out.println("PART1 answer for INPUT: [before: " + PROGRAM + "] [after: " + getProgramAfterDance(INPUT, PROGRAM) + "]");
+        System.out.println("PART1 answer for TEST: " + getProgramAfterDance(TEST, "abcde",1));
+        System.out.println("PART1 answer for INPUT: [before: " + PROGRAM + "] [after: " + getProgramAfterDance(INPUT, PROGRAM,1) + "]");
 
-        System.out.println("PART2 answer for INPUT: " + getProgramAfterDancePart2(INPUT, PROGRAM));
+        System.out.println("PART2 answer for INPUT: " + getProgramAfterDance(INPUT, PROGRAM, DANCE_ITERATIONS));
     }
 
-    public static String getProgramAfterDancePart2(String input, String program) throws IOException, URISyntaxException {
+    public static String getProgramAfterDance(String input, String program, int iterations) throws IOException, URISyntaxException {
         String[] array = getDanceFromInput(input);
 
         Set<String> comboSet = new LinkedHashSet<>();
         String newProgram = program;
-        for (int i = 0; i < DANCE_ITERATIONS; i++) {
+        for (int i = 0; i < iterations; i++) {
             for (String danceMove : array) {
                 char move = danceMove.charAt(0);
                 newProgram = functionMap.get(move).apply(danceMove, newProgram);
@@ -90,22 +90,9 @@ public class Day16 {
 
         String[] combinationArray = new String[comboSet.size()];
         comboSet.toArray(combinationArray);
-        int newProgramIndex = DANCE_ITERATIONS % comboSet.size();
+        int newProgramIndex = iterations % comboSet.size();
 
-        return combinationArray[newProgramIndex - 1];
-    }
-
-
-    public static String getProgramAfterDance(String input, String program) throws IOException, URISyntaxException {
-        String[] array = getDanceFromInput(input);
-
-        String newProgram = program;
-        for (String danceMove : array) {
-            char move = danceMove.charAt(0);
-            newProgram = functionMap.get(move).apply(danceMove, newProgram);
-        }
-
-        return newProgram;
+        return combinationArray[newProgramIndex == 0 ? 0 : newProgramIndex - 1];
     }
 
     private static String[] getDanceFromInput(String fileName) throws IOException, URISyntaxException {
