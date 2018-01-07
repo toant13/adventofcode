@@ -14,7 +14,6 @@ public class Day15 {
     public static final int MULTIPLE_B = 8;
     public static final int DIVISOR = 2147483647;
 
-
     public static int BITS_TO_COMPARE = 16;
     public static int PART1_TOTAL_PAIRS = 40000000;
     public static int PART2_TOTAL_PAIRS = 5000000;
