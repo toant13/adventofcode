@@ -5,9 +5,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,10 +15,95 @@ public class Day18 {
 
     private static final String INPUT = "Day18Input";
     private static final String TEST = "Day18Part1Test";
+    private static final String TEST2 = "Day18Part2Test";
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("PART1 answer for TEST: " + getLastRecoveredFrequency(TEST));
-        System.out.println("PART1 answer for INPUT: " + getLastRecoveredFrequency(INPUT));
+//        System.out.println("PART1 answer for TEST: " + getLastRecoveredFrequency(TEST));
+//        System.out.println("PART1 answer for INPUT: " + getLastRecoveredFrequency(INPUT));
+
+//        System.out.println("PART2 answer for TEST: " + getTimesProgramOneSend(TEST2));
+//        System.out.println("PART2 answer for INPUT: " + getTimesProgramOneSend(INPUT));
+        getTimesProgramOneSend(INPUT);
+    }
+
+
+    private static int sendCount = 0;
+
+    public static void getTimesProgramOneSend(String input) throws IOException, URISyntaxException {
+        List<String> instructions = getInstructions(input);
+
+        Map<String, Long> registerMapProgram0 = new HashMap<>();
+        registerMapProgram0.put("p", 0L);
+        Queue<Long> queue0 = new LinkedList<>();
+
+        Map<String, Long> registerMapProgram1 = new HashMap<>();
+        registerMapProgram1.put("p", 1L);
+        Queue<Long> queue1 = new LinkedList<>();
+
+        int program0Index;
+        int program1Index;
+        int program0IndexAfter = 0;
+        int program1IndexAfter = 0;
+        sendCount = 0;
+
+        boolean p0 = true;
+        do {
+            program0Index = program0IndexAfter;
+            program1Index = program1IndexAfter;
+            if (p0) {
+                program0IndexAfter = executeInstructions(instructions, 0, program0Index, registerMapProgram0, queue0, queue1);
+                if (program0Index == program0IndexAfter) {
+                    p0 = false;
+                }
+            } else {
+                program1IndexAfter = executeInstructions(instructions, 1, program1Index, registerMapProgram1, queue0, queue1);
+                if (program1Index == program1IndexAfter) {
+                    p0 = true;
+                }
+            }
+
+
+//        } while (program0Index != program0IndexAfter || program1Index != program1IndexAfter);
+        } while (true);
+//        return sendCount;
+    }
+
+    public static int executeInstructions(List<String> instructions, int programNum, int index, Map<String, Long> registerMap, Queue<Long> queue0, Queue<Long> queue1) {
+        String instruction = instructions.get(index);
+        int nextIndex = index;
+
+        switch (instruction.split(" ")[0]) {
+            case "snd":
+                send(instruction, registerMap, programNum, queue0, queue1);
+                nextIndex++;
+                break;
+            case "set":
+                set(instruction, registerMap);
+                nextIndex++;
+                break;
+            case "add":
+                arithmetic(instruction, registerMap, (a, b) -> a + b);
+                nextIndex++;
+                break;
+            case "mul":
+                arithmetic(instruction, registerMap, (a, b) -> a * b);
+                nextIndex++;
+                break;
+            case "mod":
+                arithmetic(instruction, registerMap, (a, b) -> a % b);
+                nextIndex++;
+                break;
+            case "rcv":
+                nextIndex = nextIndex + recover(instruction, programNum, registerMap, queue0, queue1);
+                break;
+            case "jgz":
+                nextIndex = jump(instruction, index, registerMap) + 1;
+                break;
+        }
+        System.out.println("[program: " + programNum + "] executing: " + instruction + " [map is : " + registerMap + "]");
+        System.out.println("queue 0: " + queue0);
+        System.out.println("queue 1: " + queue1);
+        return nextIndex;
     }
 
     public static long getLastRecoveredFrequency(String input) throws IOException, URISyntaxException {
@@ -75,6 +158,28 @@ public class Day18 {
         return registerMap.get(register);
     }
 
+    private static void send(String instruction, Map<String, Long> registerMap, int programNum, Queue<Long> queue0, Queue<Long> queue1) {
+        String valueString = instruction.split(" ")[1];
+
+        if (Character.isAlphabetic(valueString.charAt(0))) {
+            preprocessMap(registerMap, valueString);
+            long value = registerMap.get(valueString);
+            if (programNum == 0) {
+                queue1.add(value);
+            } else {
+//                sendCount++;
+                queue0.add(value);
+            }
+        } else {
+            if (programNum == 0) {
+                queue1.add(Long.parseLong(valueString));
+            } else {
+//                sendCount++;
+                queue0.add(Long.parseLong(valueString));
+            }
+        }
+    }
+
     private static void set(String instruction, Map<String, Long> registerMap) {
         String[] instructionArray = instruction.split(" ");
         String register = instructionArray[1];
@@ -106,6 +211,26 @@ public class Day18 {
         }
 
         return lastRecoveredFrequency;
+    }
+
+    private static int recover(String instruction, int programNum, Map<String, Long> registerMap, Queue<Long> queue0, Queue<Long> queue1) {
+        String[] instructionArray = instruction.split(" ");
+        String register = instructionArray[1];
+
+        if (programNum == 0) {
+            if (queue0.isEmpty()) {
+                return 0;
+            }
+            sendCount++;
+            registerMap.put(register, queue0.poll());
+        } else {
+            if (queue1.isEmpty()) {
+                return 0;
+            }
+            registerMap.put(register, queue1.poll());
+        }
+
+        return 1;
     }
 
     private static int jump(String instruction, int currentInstructionIndex, Map<String, Long> registerMap) {
