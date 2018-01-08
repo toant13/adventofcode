@@ -30,7 +30,7 @@ public class Day18 {
         Map<String, Long> registerMap = new HashMap<>();
         for (int i = 0; i < instructions.size(); i++) {
             String instruction = instructions.get(i);
-            switch (instructions.get(i).split(" ")[0]) {
+            switch (instruction.split(" ")[0]) {
                 case "snd":
                     lastPlayedFrequency = send(instruction, registerMap);
                     break;
@@ -81,6 +81,7 @@ public class Day18 {
         String registerValueString = instructionArray[2];
         preprocessMap(registerMap, register);
         long registerValue = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(registerValueString) : Integer.parseInt(registerValueString);
+
         registerMap.put(register, registerValue);
     }
 
@@ -90,8 +91,8 @@ public class Day18 {
         String registerValueString = instructionArray[2];
         preprocessMap(registerMap, register);
         long registerValue = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(registerValueString) : Integer.parseInt(registerValueString);
-
         long number = registerMap.get(register);
+
         registerMap.put(register, operation.apply(number, registerValue));
     }
 
@@ -124,6 +125,7 @@ public class Day18 {
     private static List<String> getInstructions(String fileName) throws IOException, URISyntaxException {
         Path path = Paths.get(Day18.class.getClassLoader().getResource(fileName).toURI());
         Stream<String> lines = Files.lines(path);
+
         return lines.collect(Collectors.toList());
     }
 }
