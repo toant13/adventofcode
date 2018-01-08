@@ -18,18 +18,17 @@ public class Day18 {
     private static final String TEST2 = "Day18Part2Test";
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-//        System.out.println("PART1 answer for TEST: " + getLastRecoveredFrequency(TEST));
-//        System.out.println("PART1 answer for INPUT: " + getLastRecoveredFrequency(INPUT));
+        System.out.println("PART1 answer for TEST: " + getLastRecoveredFrequency(TEST));
+        System.out.println("PART1 answer for INPUT: " + getLastRecoveredFrequency(INPUT));
 
-//        System.out.println("PART2 answer for TEST: " + getTimesProgramOneSend(TEST2));
-//        System.out.println("PART2 answer for INPUT: " + getTimesProgramOneSend(INPUT));
-        getTimesProgramOneSend(INPUT);
+        System.out.println("PART2 answer for TEST: " + getTimesProgramOneSend(TEST2));
+        System.out.println("PART2 answer for INPUT: " + getTimesProgramOneSend(INPUT));
     }
 
 
     private static int sendCount = 0;
 
-    public static void getTimesProgramOneSend(String input) throws IOException, URISyntaxException {
+    public static int getTimesProgramOneSend(String input) throws IOException, URISyntaxException {
         List<String> instructions = getInstructions(input);
 
         Map<String, Long> registerMapProgram0 = new HashMap<>();
@@ -46,26 +45,14 @@ public class Day18 {
         int program1IndexAfter = 0;
         sendCount = 0;
 
-        boolean p0 = true;
         do {
             program0Index = program0IndexAfter;
             program1Index = program1IndexAfter;
-            if (p0) {
-                program0IndexAfter = executeInstructions(instructions, 0, program0Index, registerMapProgram0, queue0, queue1);
-                if (program0Index == program0IndexAfter) {
-                    p0 = false;
-                }
-            } else {
-                program1IndexAfter = executeInstructions(instructions, 1, program1Index, registerMapProgram1, queue0, queue1);
-                if (program1Index == program1IndexAfter) {
-                    p0 = true;
-                }
-            }
+            program0IndexAfter = executeInstructions(instructions, 0, program0Index, registerMapProgram0, queue0, queue1);
+            program1IndexAfter = executeInstructions(instructions, 1, program1Index, registerMapProgram1, queue0, queue1);
+        } while (program0Index != program0IndexAfter || program1Index != program1IndexAfter);
 
-
-//        } while (program0Index != program0IndexAfter || program1Index != program1IndexAfter);
-        } while (true);
-//        return sendCount;
+        return sendCount;
     }
 
     public static int executeInstructions(List<String> instructions, int programNum, int index, Map<String, Long> registerMap, Queue<Long> queue0, Queue<Long> queue1) {
@@ -100,9 +87,6 @@ public class Day18 {
                 nextIndex = jump(instruction, index, registerMap) + 1;
                 break;
         }
-        System.out.println("[program: " + programNum + "] executing: " + instruction + " [map is : " + registerMap + "]");
-        System.out.println("queue 0: " + queue0);
-        System.out.println("queue 1: " + queue1);
         return nextIndex;
     }
 
@@ -145,15 +129,9 @@ public class Day18 {
         return lastRecoveredFrequency;
     }
 
-    private static void preprocessMap(Map<String, Long> registerMap, String register) {
-        if (!registerMap.containsKey(register)) {
-            registerMap.put(register, 0L);
-        }
-    }
-
     private static long send(String instruction, Map<String, Long> registerMap) {
         String register = instruction.split(" ")[1];
-        preprocessMap(registerMap, register);
+        registerMap.putIfAbsent(register, 0L);
 
         return registerMap.get(register);
     }
@@ -162,19 +140,19 @@ public class Day18 {
         String valueString = instruction.split(" ")[1];
 
         if (Character.isAlphabetic(valueString.charAt(0))) {
-            preprocessMap(registerMap, valueString);
+            registerMap.putIfAbsent(valueString, 0L);
             long value = registerMap.get(valueString);
             if (programNum == 0) {
                 queue1.add(value);
             } else {
-//                sendCount++;
+                sendCount++;
                 queue0.add(value);
             }
         } else {
             if (programNum == 0) {
                 queue1.add(Long.parseLong(valueString));
             } else {
-//                sendCount++;
+                sendCount++;
                 queue0.add(Long.parseLong(valueString));
             }
         }
@@ -184,7 +162,7 @@ public class Day18 {
         String[] instructionArray = instruction.split(" ");
         String register = instructionArray[1];
         String registerValueString = instructionArray[2];
-        preprocessMap(registerMap, register);
+        registerMap.putIfAbsent(register, 0L);
         long registerValue = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(registerValueString) : Integer.parseInt(registerValueString);
 
         registerMap.put(register, registerValue);
@@ -194,7 +172,7 @@ public class Day18 {
         String[] instructionArray = instruction.split(" ");
         String register = instructionArray[1];
         String registerValueString = instructionArray[2];
-        preprocessMap(registerMap, register);
+        registerMap.putIfAbsent(register, 0L);
         long registerValue = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(registerValueString) : Integer.parseInt(registerValueString);
         long number = registerMap.get(register);
 
@@ -204,7 +182,7 @@ public class Day18 {
     private static long recover(String instruction, long lastPlayedFrequency, long lastRecoveredFrequency, Map<String, Long> registerMap) {
         String[] instructionArray = instruction.split(" ");
         String register = instructionArray[1];
-        preprocessMap(registerMap, register);
+        registerMap.putIfAbsent(register, 0L);
         long registerValue = registerMap.get(register);
         if (registerValue != 0) {
             return lastPlayedFrequency;
@@ -221,7 +199,6 @@ public class Day18 {
             if (queue0.isEmpty()) {
                 return 0;
             }
-            sendCount++;
             registerMap.put(register, queue0.poll());
         } else {
             if (queue1.isEmpty()) {
@@ -236,11 +213,14 @@ public class Day18 {
     private static int jump(String instruction, int currentInstructionIndex, Map<String, Long> registerMap) {
         String[] instructionArray = instruction.split(" ");
         String register = instructionArray[1];
-        String registerValueString = instructionArray[2];
-        preprocessMap(registerMap, register);
-        long offset = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(register) : Integer.parseInt(registerValueString);
+        if (Character.isAlphabetic(register.charAt(0))) {
+            registerMap.putIfAbsent(register, 0L);
+        }
 
-        if (registerMap.get(register) > 0) {
+        String registerValueString = instructionArray[2];
+        long offset = Character.isAlphabetic(registerValueString.charAt(0)) ? registerMap.get(register) : Integer.parseInt(registerValueString);
+        long x = Character.isAlphabetic(register.charAt(0)) ? registerMap.get(register) : Long.parseLong(register); //you sneaky asshole making X a number or character
+        if (x > 0) {
             return (int) (currentInstructionIndex + offset - 1);
         }
 
