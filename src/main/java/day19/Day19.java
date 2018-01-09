@@ -13,25 +13,49 @@ import java.util.stream.Stream;
 public class Day19 {
 
     private static final String INPUT = "Day19Input";
+    private static final String TEST = "Day19TestInput";
 
     private static final char CHANGE = '+';
-    private static final char HORIZONTAL = '-';
-    private static final char VERTICAL = '|';
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("PART1 answer for TEST: " + findPath(INPUT));
+        System.out.println("PART1 answer for TEST: " + findPath(TEST));
+        System.out.println("PART2 answer for TEST: " + (totalSteps) + "\n");
+
+        System.out.println("PART1 answer for INPUT: " + findPath(INPUT));
+        System.out.println("PART2 answer for INPUT: " + (totalSteps));
     }
 
-
+    private static int totalSteps = 0;
     public static String findPath(String input) throws IOException, URISyntaxException {
         List<String> diagram = getTubes(input);
-        StringBuilder path = new StringBuilder();
-
         char[][] diagramArray = buildDiagramArray(diagram);
-        int index = findStartingPoint(diagramArray);
+        StringBuilder path = new StringBuilder();
+        int x = findStartingPoint(diagramArray);
+        int y = 0;
+        Direction currentDirection = Direction.DOWN;
+        totalSteps = 0;
 
+        while (diagramArray[y][x] != ' ') {
+            x = currentDirection.getNextX(x);
+            y = currentDirection.getNextY(y);
+            totalSteps++;
+
+            if (diagramArray[y][x] == CHANGE) {
+                currentDirection = getChangeDirection(x, y, diagramArray, currentDirection);
+            } else if (Character.isAlphabetic(diagramArray[y][x])) {
+                path.append(diagramArray[y][x]);
+            }
+        }
 
         return path.toString();
+    }
+
+    private static Direction getChangeDirection(int x, int y, char[][] diagramArray, Direction currentDirection) {
+        if (currentDirection == Direction.DOWN || currentDirection == Direction.UP) {
+            return diagramArray[y][x - 1] == ' ' ? Direction.RIGHT : Direction.LEFT;
+        }
+
+        return diagramArray[y + 1][x] == ' '? Direction.UP : Direction.DOWN;
     }
 
     private static char[][] buildDiagramArray(List<String> diagram) {
