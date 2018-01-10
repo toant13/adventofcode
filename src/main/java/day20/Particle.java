@@ -62,6 +62,11 @@ public class Particle {
         this.velocityZ += this.accelerationZ;
     }
 
+    public boolean samePosition(Particle particle) {
+        return this.positionX == particle.positionX && this.positionY == particle.positionY && this.positionZ == particle.positionZ;
+    }
+
+
     public int getDistance() {
         return Math.abs(this.positionX) + Math.abs(this.positionY) + Math.abs(this.positionZ);
     }
