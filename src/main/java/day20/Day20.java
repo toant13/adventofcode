@@ -88,7 +88,7 @@ public class Day20 {
         return particles;
     }
 
-    private static List<String> getParticleCoordinates(String fileName) throws IOException, URISyntaxException, URISyntaxException {
+    private static List<String> getParticleCoordinates(String fileName) throws IOException, URISyntaxException {
         Path path = Paths.get(Day20.class.getClassLoader().getResource(fileName).toURI());
         Stream<String> lines = Files.lines(path);
 
