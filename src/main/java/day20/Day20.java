@@ -15,7 +15,7 @@ public class Day20 {
     private static final String INPUT = "Day20Input";
     private static final String TEST = "Day20Part1Test";
     private static final String TEST2 = "Day20Part2Test";
-    private static final int LONG_TERM = 10000;
+    private static final int LONG_TERM = 1000;
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + findClosestParticle(TEST, Day20::getClosest));
@@ -37,7 +37,6 @@ public class Day20 {
                 }
             });
             result = function.apply(particles);
-            System.out.println(result);
         }
 
         return result;
@@ -46,7 +45,7 @@ public class Day20 {
     public static int computeCollisions(Particle[] particles) {
         int totalLeft = 0;
 
-        for (int i = 0; i < particles.length - 1; i++) {
+        for (int i = 0; i < particles.length; i++) {
             if (particles[i] != null) {
                 Particle currentParticle = particles[i];
                 Set<Integer> particlesToRemove = new HashSet<>();

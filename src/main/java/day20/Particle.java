@@ -53,13 +53,13 @@ public class Particle {
     }
 
     public void move() {
-        this.positionX += this.velocityX;
-        this.positionY += this.velocityY;
-        this.positionZ += this.velocityZ;
-
         this.velocityX += this.accelerationX;
         this.velocityY += this.accelerationY;
         this.velocityZ += this.accelerationZ;
+
+        this.positionX += this.velocityX;
+        this.positionY += this.velocityY;
+        this.positionZ += this.velocityZ;
     }
 
     public boolean samePosition(Particle particle) {
