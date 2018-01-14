@@ -17,7 +17,7 @@ public class Day21 {
     private static final int NUMBER_ITERATIONS = 5;
 
     public static void main(String[] args) throws Exception {
-//        System.out.println("PART1 answer for TEST: " + getNumberOfOnPixels(TEST, 2));
+        System.out.println("PART1 answer for TEST: " + getNumberOfOnPixels(TEST, 2));
         System.out.println("PART1 answer for INPUT: " + getNumberOfOnPixels(INPUT, NUMBER_ITERATIONS));
 
     }
@@ -26,10 +26,10 @@ public class Day21 {
         Map<String, String> enhancementRulesMap = getEnhancementRules(input);
         char[][] grid = getStartGrid();
 
-        printCurrentGrid(grid);
+//        printCurrentGrid(grid);
         for (int i = 0; i < numberOfIterations; i++) {
             grid = getNewGrid(grid, enhancementRulesMap);
-            printCurrentGrid(grid);
+//            printCurrentGrid(grid);
 
         }
         return getOpenCount(grid);
@@ -62,6 +62,8 @@ public class Day21 {
     }
 
     private static void populateGrid(char[][] oldGrid, char[][] newGrid, Map<String, String> enhancementRulesMap, int multiple) {
+        int newY = 0;
+        int newX = 0;
         for (int oldY = 0; oldY < oldGrid.length; oldY = oldY + multiple) {
             for (int oldX = 0; oldX < oldGrid.length; oldX = oldX + multiple) {
                 StringBuilder keyStringBuilder = new StringBuilder();
@@ -74,9 +76,18 @@ public class Day21 {
                 String key = keyStringBuilder.toString().substring(0, keyStringBuilder.toString().length() - 1);
                 String outputValue = getOutputValue(key, enhancementRulesMap);
 
-//                System.out.println(outputValue);
-
-
+                String[] outputArray = outputValue.split("/");
+                for (int outY = 0; outY < outputArray.length; outY++) {
+                    for (int outX = 0; outX < outputArray[0].length(); outX++) {
+                        newGrid[newY + outY][newX + outX] = outputArray[outY].charAt(outX);
+                    }
+                }
+                if (newX + outputArray[0].length() < newGrid[0].length) {
+                    newX = newX + outputArray[0].length();
+                } else {
+                    newX = 0;
+                    newY = newY + outputArray.length;
+                }
             }
         }
 
