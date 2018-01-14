@@ -11,6 +11,4 @@ public enum Direction {
     Direction(String direction) {
         this.direction = direction;
     }
-
-
 }

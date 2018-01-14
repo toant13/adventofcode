@@ -9,17 +9,13 @@ public class Burst {
     int x;
     int y;
 
-    int currentWidth;
-    int currentHeight;
+    static final char INFECTED = '#';
 
-
-    public Burst(Set<String> gridMap, int x, int y, int currentWidth, int currentHeight) {
+    public Burst(Set<String> gridMap, int x, int y) {
         direction = Direction.UP;
         this.gridMap = gridMap;
         this.x = x;
         this.y = y;
-        this.currentWidth = currentWidth;
-        this.currentHeight = currentHeight;
     }
 
     public void moveLeft() {
