@@ -89,8 +89,6 @@ public class Day21 {
                 }
             }
         }
-
-
     }
 
     private static String getOutputValue(String key, Map<String, String> enhancementRulesMap) {
