@@ -19,7 +19,7 @@ public class Day22 {
 
     public static void main(String[] args) throws Exception {
         System.out.println("PART1 answer for TEST: " + getNumberOfInfected(TEST, 10000));
-//        System.out.println("PART1 answer for INPUT: " + getNumberOfInfected(INPUT, 10000));
+        System.out.println("PART1 answer for INPUT: " + getNumberOfInfected(INPUT, 10000));
     }
 
 
@@ -27,12 +27,12 @@ public class Day22 {
         int count = 0;
         Burst burst = getBurst(input);
         for (int i = 0; i < numberOfBursts; i++) {
-            if(burst.isInfected()){
+            if (burst.isInfected()) {
                 burst.clean();
-                burst.moveLeft();
+                burst.moveRight();
             } else { //is clean
                 burst.infect();
-                burst.moveRight();
+                burst.moveLeft();
                 count++;
             }
         }
@@ -48,51 +48,11 @@ public class Day22 {
         List<String> list = lines.collect(Collectors.toList());
         for (int y = 0; y < list.size(); y++) {
             for (int x = 0; x < list.get(y).length(); x++) {
-                if(list.get(y).charAt(x)== INFECTED){
+                if (list.get(y).charAt(x) == INFECTED) {
                     gridMap.add(x + "," + y);
                 }
             }
         }
-        return new Burst(gridMap, list.get(0).length()/2, list.size()/2, list.get(0).length(),list.size());
+        return new Burst(gridMap, list.get(0).length() / 2, list.size() / 2, list.get(0).length(), list.size());
     }
-
-
-
-
-
-
-//    private static int getNumberOfInfected(String input, int numberOfBursts) throws Exception {
-//        char[][] grid = getEnhancementRules(input);
-//
-//        int count = 0;
-//        Burst burst = new Burst(grid[0].length / 2, grid.length / 2);
-//        for (int i = 0; i < numberOfBursts; i++) {
-//            if (grid[burst.y][burst.x] == CLEAN) {
-//                grid[burst.y][burst.x] = INFECTED;
-//                burst.moveRight();
-//                count++;
-//            } else if (grid[burst.y][burst.x] == INFECTED) {
-//                grid[burst.y][burst.x] = CLEAN;
-//                burst.moveLeft();
-//            } else {
-//                throw new Exception("ohhh no!!!");
-//            }
-//        }
-//
-//        return count;
-//    }
-//
-//
-//    private static char[][] getEnhancementRules(String fileName) throws IOException, URISyntaxException {
-//        Path path = Paths.get(Day22.class.getClassLoader().getResource(fileName).toURI());
-//        Stream<String> lines = Files.lines(path);
-//        List<String> list = lines.collect(Collectors.toList());
-//
-//        char[][] grid = new char[list.size()][];
-//        for (int i = 0; i < list.size(); i++) {
-//            grid[i] = list.get(i).toCharArray();
-//        }
-//
-//        return grid;
-//    }
 }
