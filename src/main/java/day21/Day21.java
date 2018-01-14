@@ -5,9 +5,8 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Stream;
 
 public class Day21 {
@@ -15,24 +14,127 @@ public class Day21 {
     private static final String TEST = "Day21Part1Test";
     private static final String INPUT = "Day21Input";
 
+    private static final int NUMBER_ITERATIONS = 5;
 
-    public static void main(String[] args) throws IOException, URISyntaxException {
-        System.out.println("PART1 answer for TEST: " + getNumberOfOnPixels(TEST));
-//        System.out.println("PART1 answer for INPUT: " + getNumberOfOnPixels(INPUT));
+    public static void main(String[] args) throws Exception {
+//        System.out.println("PART1 answer for TEST: " + getNumberOfOnPixels(TEST, 2));
+        System.out.println("PART1 answer for INPUT: " + getNumberOfOnPixels(INPUT, NUMBER_ITERATIONS));
+
+    }
+
+    public static int getNumberOfOnPixels(String input, int numberOfIterations) throws Exception {
+        Map<String, String> enhancementRulesMap = getEnhancementRules(input);
+        char[][] grid = getStartGrid();
+
+        printCurrentGrid(grid);
+        for (int i = 0; i < numberOfIterations; i++) {
+            grid = getNewGrid(grid, enhancementRulesMap);
+            printCurrentGrid(grid);
+
+        }
+        return getOpenCount(grid);
+    }
+
+    private static void printCurrentGrid(char[][] grid) {
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[0].length; x++) {
+                System.out.print(grid[y][x]);
+            }
+            System.out.println("");
+        }
+        System.out.println("");
+    }
+
+
+    private static char[][] getNewGrid(char[][] oldGrid, Map<String, String> enhancementRulesMap) throws Exception {
+        int newSize = oldGrid.length % 2 == 0 ? oldGrid.length / 2 * 3 : oldGrid.length / 3 * 4;
+        char[][] newGrid = new char[newSize][newSize];
+
+        if (oldGrid.length % 2 == 0) {
+            populateGrid(oldGrid, newGrid, enhancementRulesMap, 2);
+        } else if (oldGrid.length % 3 == 0) {
+            populateGrid(oldGrid, newGrid, enhancementRulesMap, 3);
+        } else {
+            throw new Exception("how is that possible?");
+        }
+
+        return newGrid;
+    }
+
+    private static void populateGrid(char[][] oldGrid, char[][] newGrid, Map<String, String> enhancementRulesMap, int multiple) {
+        for (int oldY = 0; oldY < oldGrid.length; oldY = oldY + multiple) {
+            for (int oldX = 0; oldX < oldGrid.length; oldX = oldX + multiple) {
+                StringBuilder keyStringBuilder = new StringBuilder();
+                for (int y = oldY; y < oldY + multiple; y++) {
+                    for (int x = oldX; x < oldX + multiple; x++) {
+                        keyStringBuilder.append(oldGrid[y][x]);
+                    }
+                    keyStringBuilder.append("/");
+                }
+                String key = keyStringBuilder.toString().substring(0, keyStringBuilder.toString().length() - 1);
+                String outputValue = getOutputValue(key, enhancementRulesMap);
+
+//                System.out.println(outputValue);
+
+
+            }
+        }
 
 
     }
 
-    public static int getNumberOfOnPixels(String input) throws IOException, URISyntaxException {
-        List<String> enhancementRules = getEnhancementRules(input);
-        char[][] grid = getStartGrid();
+    private static String getOutputValue(String key, Map<String, String> enhancementRulesMap) {
+        int i = 0;
+        while (!enhancementRulesMap.containsKey(key) && i < 4) {
+            key = getRotatedKey(key);
+            String flippedKey = getFlippedKey(key);
+            if (enhancementRulesMap.containsKey(flippedKey)) {
+                key = flippedKey;
+                break;
+            }
+            i++;
+        }
 
+        return enhancementRulesMap.get(key);
+    }
 
+    private static String getRotatedKey(String oldKey) {
+        String[] splitArray = oldKey.split("/");
+        int length = splitArray[0].length();
+        StringBuilder newKey = new StringBuilder();
 
+        for (int x = 0; x < length; x++) {
+            for (int y = length - 1; y >= 0; y--) {
+                newKey.append(splitArray[y].charAt(x));
+            }
+            newKey.append("/");
+        }
 
+        return newKey.toString().substring(0, newKey.toString().length() - 1);
+    }
 
-        
-        return getOpenCount(grid);
+    private static String getFlippedKey(String oldKey) {
+        String[] splitArray = oldKey.split("/");
+
+        for (int i = 0; i < splitArray.length; i++) {
+            char[] charArray = splitArray[i].toCharArray();
+            int start = 0;
+            int end = charArray.length - 1;
+            while (end > start) {
+                char tmp = charArray[end];
+                charArray[end--] = charArray[start];
+                charArray[start++] = tmp;
+            }
+            splitArray[i] = String.valueOf(charArray);
+        }
+
+        StringBuilder newKey = new StringBuilder();
+        for (String s : splitArray) {
+            newKey.append(s);
+            newKey.append("/");
+        }
+
+        return newKey.toString().substring(0, newKey.length() - 1);
     }
 
     private static int getOpenCount(char[][] grid) {
@@ -45,15 +147,16 @@ public class Day21 {
                 }
             }
         }
-
-        return 0;
+        return count;
     }
 
-    private static List<String> getEnhancementRules(String fileName) throws IOException, URISyntaxException {
+    private static Map<String, String> getEnhancementRules(String fileName) throws IOException, URISyntaxException {
         Path path = Paths.get(Day21.class.getClassLoader().getResource(fileName).toURI());
         Stream<String> lines = Files.lines(path);
+        Map<String, String> rulesMap = new HashMap<>();
+        lines.map(rule -> rule.split("=>")).forEach(inputOutput -> rulesMap.put(inputOutput[0].trim(), inputOutput[1].trim()));
 
-        return lines.collect(Collectors.toList());
+        return rulesMap;
     }
 
     private static char[][] getStartGrid() {
