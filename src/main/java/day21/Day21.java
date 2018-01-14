@@ -14,12 +14,11 @@ public class Day21 {
     private static final String TEST = "Day21Part1Test";
     private static final String INPUT = "Day21Input";
 
-    private static final int NUMBER_ITERATIONS = 5;
-
     public static void main(String[] args) throws Exception {
         System.out.println("PART1 answer for TEST: " + getNumberOfOnPixels(TEST, 2));
-        System.out.println("PART1 answer for INPUT: " + getNumberOfOnPixels(INPUT, NUMBER_ITERATIONS));
+        System.out.println("PART1 answer for INPUT: " + getNumberOfOnPixels(INPUT, 5));
 
+        System.out.println("PART2 answer for INPUT: " + getNumberOfOnPixels(INPUT, 18));
     }
 
     public static int getNumberOfOnPixels(String input, int numberOfIterations) throws Exception {
