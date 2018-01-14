@@ -10,6 +10,10 @@ public class Register {
         this.registerMap = new HashMap<>();
     }
 
+    public Register(Map<Character, Long> registerMap) {
+        this.registerMap = registerMap;
+    }
+
     public void set(String x, String y) {
         char key = x.charAt(0);
 
