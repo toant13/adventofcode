@@ -18,30 +18,42 @@ public class Day24 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + getStrengthOfStrongestBridge(TEST));
+        System.out.println("PART2 answer for TEST: [maxLength:" + maxLength + " max:" + maxOfMax + "]");
+
         System.out.println("PART1 answer for INPUT: " + getStrengthOfStrongestBridge(INPUT));
+        System.out.println("PART2 answer for INPUT: [maxLength:" + maxLength + " max:" + maxOfMax + "]");
     }
 
     public static int getStrengthOfStrongestBridge(String input) throws IOException, URISyntaxException {
         int highestStrength = Integer.MIN_VALUE;
         List<String> components = getComponentsList(input);
-
         Map<Integer, List<String>> map = getMap(components);
 
         List<String> startList = map.get(0);
+        maxLength = 0;
+        maxOfMax = Integer.MIN_VALUE;
         for (String component : startList) {
-            int currentStrength = helper(map, new HashSet<>(components), 0, 0, component);
+            int currentStrength = getMostStrength(map, new HashSet<>(components), 0, 0, component, 0);
             highestStrength = currentStrength > highestStrength ? currentStrength : highestStrength;
         }
 
         return highestStrength;
     }
 
-    private static int helper(Map<Integer, List<String>> map, Set<String> nonVisited, int currentStrength, int currentPort, String currentComponent) {
-        if (!map.containsKey(currentPort)) {
-            return currentStrength;
-        }
+    private static int maxLength = 0;
+    private static int maxOfMax = Integer.MIN_VALUE;
 
-        if (!nonVisited.contains(currentComponent)) {
+    private static int getMostStrength(Map<Integer, List<String>> map, Set<String> nonVisited, int currentStrength, int currentPort, String currentComponent, int currentLength) {
+        if (!map.containsKey(currentPort) || !nonVisited.contains(currentComponent)) {
+            if (currentLength > maxLength) {
+                maxOfMax = currentStrength;
+                maxLength = currentLength;
+            } else if (currentLength == maxLength) {
+                if (currentStrength > maxOfMax) {
+                    maxOfMax = currentStrength;
+                }
+            }
+
             return currentStrength;
         }
 
@@ -50,7 +62,7 @@ public class Day24 {
         int total = currentStrength;
         nonVisited.remove(currentComponent);
         for (String nextComponent : nextComponents) {
-            int value = helper(map, nonVisited, currentStrength + nextPort + currentPort, nextPort, nextComponent);
+            int value = getMostStrength(map, nonVisited, currentStrength + nextPort + currentPort, nextPort, nextComponent, currentLength + 1);
             total = value > total ? value : total;
         }
         nonVisited.add(currentComponent);
