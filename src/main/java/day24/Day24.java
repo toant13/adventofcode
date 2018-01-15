@@ -18,7 +18,7 @@ public class Day24 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
         System.out.println("PART1 answer for TEST: " + getStrengthOfStrongestBridge(TEST));
-        System.out.println("PART2 answer for TEST: [maxLength:" + maxLength + " max:" + maxOfMax + "]");
+        System.out.println("PART2 answer for TEST: [maxLength:" + maxLength + " max:" + maxOfMax + "]\n");
 
         System.out.println("PART1 answer for INPUT: " + getStrengthOfStrongestBridge(INPUT));
         System.out.println("PART2 answer for INPUT: [maxLength:" + maxLength + " max:" + maxOfMax + "]");
