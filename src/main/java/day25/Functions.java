@@ -7,5 +7,4 @@ public interface Functions {
 
     Map<States, Consumer<Tape>> getFunctions();
 
-
 }
